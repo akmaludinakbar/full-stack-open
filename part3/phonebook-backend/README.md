@@ -48,13 +48,13 @@ The `Dockerfile` builds the frontend and runs the backend with Node 24. `render.
 | Exercise | Local status |
 | --- | --- |
 | 3.1–3.8 | Final server routes, request logging, POST body logging implemented and tested where applicable; earlier in-memory stages are superseded. |
-| 3.9 | Copied Part 2 frontend connected to `/api/persons`; local verification described in `docs/reports/part3-implementation.txt`. |
+| 3.9 | Copied Part 2 frontend connected to `/api/persons`; adding a contact and loading it again after a browser reload verified against temporary local MongoDB. |
 | 3.10 | Pending public deployment and live API check. |
 | 3.11 | Local production build served by Express; pending live deployed check. |
 | 3.12 | CLI verified against temporary MongoDB; pending Atlas account, cluster, and connection. |
 | 3.13–3.18 | MongoDB CRUD, update, info, and error middleware verified locally. |
 | 3.19–3.20 | Mongoose validation and frontend error display verified locally. |
-| 3.21 | Local production assets, API, and component tests verified; browser interaction, cloud rebuild, and live check pending. |
+| 3.21 | Local production assets, API, component tests, and browser create/reload flow verified; cloud rebuild and live deployed check pending. |
 | 3.22 | ESLint configured and checked. |
 
 This implementation was prepared with AI assistance. The learner must review the exercises, create or authorize the required accounts and deployment, verify the live application, push the final code to GitHub, and decide what to submit in the course app. No exercise submission or certificate claim is made here.

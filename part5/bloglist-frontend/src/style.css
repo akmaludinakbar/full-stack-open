@@ -1,0 +1,22 @@
+:root { font-family: system-ui, sans-serif; color: #162235; background: #f5f7fa; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+.page { max-width: 780px; margin: 2.5rem auto; padding: 0 1rem 3rem; }
+h1 { margin-bottom: 1.5rem; }
+.panel { background: white; border: 1px solid #d8e0ea; border-radius: 8px; padding: 1rem; }
+.form { display: grid; gap: .8rem; max-width: 450px; }
+.form h2 { margin: 0 0 .3rem; }
+.form label { display: grid; gap: .25rem; }
+input { font: inherit; padding: .55rem; border: 1px solid #8392a5; border-radius: 4px; }
+button { font: inherit; cursor: pointer; border: 1px solid #53657f; border-radius: 4px; padding: .4rem .7rem; background: #fff; color: #162235; }
+button:hover:not(:disabled) { background: #e8eef5; }
+button:disabled { cursor: default; opacity: .55; }
+.actions, .session, .blog-heading { display: flex; align-items: center; gap: .75rem; }
+.session { justify-content: space-between; margin-bottom: 1rem; }
+.notification { padding: .75rem 1rem; border-radius: 4px; margin-bottom: 1rem; }
+.notification.success { background: #e5f5e8; border: 1px solid #37864b; }
+.notification.error, .load-error { background: #fff0ef; border: 1px solid #b8433b; padding: .75rem; border-radius: 4px; }
+.blog-list { display: grid; gap: .6rem; }
+.blog-heading { justify-content: space-between; }
+.blog-details { display: grid; justify-items: start; gap: .6rem; margin-top: .8rem; overflow-wrap: anywhere; }
+.blog-details a { color: #135a9f; }
