@@ -1,0 +1,20 @@
+# Full Stack Open coursework
+
+Coursework for [Full Stack Open](https://fullstackopen.com/), University of Helsinki.
+
+## AI assistance and status
+
+Codex assisted with planning, implementation, explanations, tests, and review. This repository does not present generated code as unaided work. The learner reported reviewing the Part 0 and Part 1 drafts on 29 October 2026. Official submission and study-hour records are tracked separately; no certificate is claimed here.
+
+## Exercises
+
+| Part | Files | Scope |
+| --- | --- | --- |
+| 0 | `part0` | Sequence diagrams 0.4–0.6; readings 0.1–0.3 are not code uploads |
+| 1 | `part1/courseinfo` | 1.1–1.5 |
+| 1 | `part1/unicafe` | 1.6–1.11 |
+| 1 | `part1/anecdotes` | 1.12–1.14 |
+
+Each application has its own README, package lock, and behavior tests. Use Node.js 24.1.0, enter the app directory, then run `npm ci`, `npm test`, `npm run build`, or `npm run dev`.
+
+Exercise wording and sample data are attributed to the official course in each app or diagram. Final application states represent the incremental exercise series. Private learning notes, local process reports, credentials, dependency directories, and build outputs are excluded.

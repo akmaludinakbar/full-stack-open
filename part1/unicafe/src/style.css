@@ -1,0 +1,23 @@
+body {
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  margin: 2rem;
+}
+
+main {
+  max-width: 44rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+button {
+  padding: 0.25rem 0.75rem;
+}
+
+td {
+  padding: 0.15rem 1rem 0.15rem 0;
+}
