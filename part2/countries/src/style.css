@@ -1,0 +1,13 @@
+body {
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  margin: 2rem;
+}
+
+main {
+  max-width: 44rem;
+}
+label { display: block; margin-bottom: 1rem; }
+.flag { width: 160px; height: auto; border: 1px solid #ddd; }
+li { margin-bottom: 0.35rem; }
+article { max-width: 36rem; }
