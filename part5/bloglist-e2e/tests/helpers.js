@@ -9,6 +9,8 @@ export async function resetAndCreateUser(request) {
 }
 
 export async function login(page, credentials = user) {
+  await page.getByRole('link', { name: 'Log in', exact: true }).click()
+  await expect(page).toHaveURL('/login')
   const form = page.getByRole('form', { name: 'Log in', exact: true })
   await form.getByLabel('Username').fill(credentials.username)
   await form.getByLabel('Password').fill(credentials.password)
@@ -26,13 +28,14 @@ export async function createBlog(page, title, author = 'Synthetic Author') {
   await form.getByLabel('Author', { exact: true }).fill(author)
   await form.getByLabel('URL', { exact: true }).fill('https://example.test/browser-blog')
   await form.getByRole('button', { name: 'Create', exact: true }).click()
+  await expect(page).toHaveURL('/')
   await expect(blogRow(page, title)).toBeVisible()
 }
 
 export async function likeTimes(row, count) {
   for (let likes = 1; likes <= count; likes += 1) {
     await row.getByRole('button', { name: 'Like', exact: true }).click()
-    await expect(row.getByText(new RegExp(`^Likes: ${likes} Like$`))).toBeVisible()
+    await expect(row.getByText(new RegExp(`^Likes: ${likes}$`))).toBeVisible()
     await expect(row.getByRole('button', { name: 'Like', exact: true })).toBeEnabled()
   }
 }

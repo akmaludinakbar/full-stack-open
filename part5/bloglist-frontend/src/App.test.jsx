@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import App from './App'
 
@@ -38,6 +38,7 @@ function deferred() {
 describe('Blog list', () => {
   beforeEach(() => {
     localStorage.clear()
+    window.history.replaceState({}, '', '/')
   })
 
   afterEach(() => {
@@ -45,14 +46,16 @@ describe('Blog list', () => {
     vi.unstubAllGlobals()
   })
 
-  it('shows the login form while logged out', () => {
+  it('shows the login form on its public route', async () => {
+    window.history.replaceState({}, '', '/login')
     mockApi(() => reply([]))
     render(<App />)
-    expect(screen.getByRole('form', { name: /log in/i })).toBeTruthy()
+    expect(await screen.findByRole('form', { name: /log in/i })).toBeTruthy()
     expect(screen.queryByRole('button', { name: /new blog/i })).toBeNull()
   })
 
-  it('logs in, stores the session, reloads it, and logs out', async () => {
+  it('logs in, stores the session, reloads it, and logs out to the public list', async () => {
+    window.history.replaceState({}, '', '/login')
     const requests = mockApi(({ url, method }) => {
       if (url === '/api/login' && method === 'POST') return reply(alice)
       if (url === '/api/blogs') return reply([firstBlog])
@@ -72,13 +75,16 @@ describe('Blog list', () => {
     render(<App />)
     expect(await screen.findByText(/First post/)).toBeTruthy()
     await user.click(screen.getByRole('button', { name: 'Log out' }))
-    expect(screen.getByRole('form', { name: /log in/i })).toBeTruthy()
+    expect(window.location.pathname).toBe('/')
+    expect(screen.getByRole('link', { name: 'Log in' })).toBeTruthy()
     expect(localStorage.getItem('bloglistUser')).toBeNull()
   })
 
   it('shows a login error and allows another attempt', async () => {
+    window.history.replaceState({}, '', '/login')
     let attempts = 0
     mockApi(({ url }) => {
+      if (url === '/api/blogs') return reply([])
       if (url !== '/api/login') throw new Error('Unexpected API call')
       attempts += 1
       return attempts === 1 ? reply({ error: 'invalid username or password' }, 401) : reply(alice)
@@ -119,6 +125,7 @@ describe('Blog list', () => {
     await waitFor(() => expect(screen.getAllByRole('article')).toHaveLength(1))
     expect(within(screen.getByRole('article')).getByText('New post')).toBeTruthy()
     expect(screen.queryByRole('form', { name: 'Create blog' })).toBeNull()
+    expect(window.location.pathname).toBe('/')
     expect(screen.getByRole('alert').textContent).toContain('New post')
   })
 
@@ -145,18 +152,18 @@ describe('Blog list', () => {
     await screen.findByText(/Popular post/)
     const articles = screen.getAllByRole('article')
     expect(articles[0].textContent).toContain('Popular post')
-    await user.click(within(articles[1]).getByRole('button', { name: 'View' }))
-    expect(within(articles[1]).getByText('https://example.com/first')).toBeTruthy()
-    expect(within(articles[1]).getByText('Added by Alice')).toBeTruthy()
-    await user.click(within(articles[1]).getByRole('button', { name: 'Like' }))
-    await waitFor(() => expect(screen.getAllByRole('article')[0].textContent).toContain('First post'))
-    expect(screen.getAllByRole('article')[0].textContent).toContain('Alice')
-    expect(screen.getAllByRole('article')[0].textContent).toContain('6')
+    await user.click(within(articles[1]).getByRole('link', { name: 'First post' }))
+    expect(screen.getByText('https://example.com/first')).toBeTruthy()
+    expect(screen.getByText('Added by Alice')).toBeTruthy()
+    await user.click(screen.getByRole('button', { name: 'Like', exact: true }))
+    expect(await screen.findByText('Likes: 6')).toBeTruthy()
+    expect(screen.getByText('Added by Alice')).toBeTruthy()
     expect(requests.find(item => item.method === 'PUT').body).toEqual({
       title: 'First post', author: 'Alice A', url: 'https://example.com/first', likes: 2, user: 'u1',
     })
-    await user.click(within(screen.getAllByRole('article')[0]).getByRole('button', { name: 'Hide' }))
-    expect(screen.queryByText('https://example.com/first')).toBeNull()
+    await user.click(screen.getByRole('link', { name: 'Blogs', exact: true }))
+    expect(screen.getAllByRole('article')[0].textContent).toContain('First post')
+    expect(screen.getAllByRole('article')[0].textContent).toContain('6')
   })
 
   it('leaves likes unchanged and reports a failed like', async () => {
@@ -165,9 +172,10 @@ describe('Blog list', () => {
     const requests = mockApi(({ method }) => method === 'GET' ? reply([firstBlog]) : pending.promise)
     const user = userEvent.setup()
     render(<App />)
-    await user.click(within(await screen.findByRole('article')).getByRole('button', { name: 'View' }))
+    await user.click(await screen.findByRole('link', { name: 'First post' }))
     await user.click(screen.getByRole('button', { name: 'Like' }))
     expect(screen.getByRole('button', { name: 'Like' }).disabled).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Like' }))
     expect(requests.filter(item => item.method === 'PUT')).toHaveLength(1)
     pending.resolve(reply({ error: 'update unavailable' }, 503))
     expect(await screen.findByRole('alert')).toHaveProperty('textContent', expect.stringContaining('update unavailable'))
@@ -183,14 +191,14 @@ describe('Blog list', () => {
     const user = userEvent.setup()
     render(<App />)
     await screen.findByText(/Popular post/)
-    const own = screen.getAllByRole('article').find(article => article.textContent.includes('First post'))
-    const other = screen.getAllByRole('article').find(article => article.textContent.includes('Popular post'))
-    await user.click(within(own).getByRole('button', { name: 'View' }))
-    await user.click(within(other).getByRole('button', { name: 'View' }))
-    expect(within(other).queryByRole('button', { name: 'Delete' })).toBeNull()
-    await user.click(within(own).getByRole('button', { name: 'Delete' }))
+    await user.click(screen.getByRole('link', { name: 'Popular post' }))
+    expect(screen.queryByRole('button', { name: 'Delete' })).toBeNull()
+    await user.click(screen.getByRole('link', { name: 'Blogs', exact: true }))
+    await user.click(screen.getByRole('link', { name: 'First post' }))
+    await user.click(screen.getByRole('button', { name: 'Delete' }))
     await waitFor(() => expect(screen.getAllByRole('article')).toHaveLength(1))
     expect(screen.getByRole('article').textContent).toContain('Popular post')
+    expect(window.location.pathname).toBe('/')
     expect(confirm).toHaveBeenCalledOnce()
     expect(requests.find(item => item.method === 'DELETE').headers.Authorization).toBe('Bearer alice-token')
   })
@@ -202,7 +210,7 @@ describe('Blog list', () => {
     vi.stubGlobal('confirm', confirm)
     const user = userEvent.setup()
     render(<App />)
-    await user.click(within(await screen.findByRole('article')).getByRole('button', { name: 'View' }))
+    await user.click(await screen.findByRole('link', { name: 'First post' }))
     await user.click(screen.getByRole('button', { name: 'Delete' }))
     expect(screen.getByText(/First post/)).toBeTruthy()
     await user.click(screen.getByRole('button', { name: 'Delete' }))
@@ -214,7 +222,8 @@ describe('Blog list', () => {
     localStorage.setItem('bloglistUser', '{bad json')
     mockApi(() => reply([]))
     render(<App />)
-    expect(screen.getByRole('form', { name: /log in/i })).toBeTruthy()
+    expect(window.location.pathname).toBe('/')
+    expect(screen.getByRole('link', { name: 'Log in' })).toBeTruthy()
     expect(localStorage.getItem('bloglistUser')).toBeNull()
     cleanup()
     asAlice()
@@ -233,7 +242,8 @@ describe('Blog list', () => {
     localStorage.setItem('bloglistUser', JSON.stringify({ id: 'u1', username: 'alice', token: 'alice-token', name: { bad: true } }))
     mockApi(() => reply([]))
     render(<App />)
-    expect(screen.getByRole('form', { name: /log in/i })).toBeTruthy()
+    expect(window.location.pathname).toBe('/')
+    expect(screen.getByRole('link', { name: 'Log in' })).toBeTruthy()
     expect(localStorage.getItem('bloglistUser')).toBeNull()
   })
 
@@ -254,7 +264,7 @@ describe('Blog list', () => {
     render(<StrictMode><App /></StrictMode>)
     await waitFor(() => expect(loads).toBe(2))
     expect(screen.getByRole('button', { name: 'New blog' }).disabled).toBe(true)
-    await user.click(screen.getByRole('button', { name: 'New blog' }))
+    fireEvent.click(screen.getByRole('button', { name: 'New blog' }))
     expect(screen.queryByRole('form', { name: 'Create blog' })).toBeNull()
     await act(async () => { secondLoad.resolve(reply([firstBlog])) })
     expect(within(screen.getByRole('article')).getByText('First post')).toBeTruthy()
@@ -283,8 +293,53 @@ describe('Blog list', () => {
     await user.click(screen.getByRole('button', { name: 'Create' }))
     await user.click(screen.getByRole('button', { name: 'Log out' }))
     pending.resolve(reply({ ...firstBlog, title: 'Late post' }))
-    await waitFor(() => expect(screen.getByRole('form', { name: /log in/i })).toBeTruthy())
+    await waitFor(() => expect(screen.getByRole('link', { name: 'Log in' })).toBeTruthy())
+    expect(window.location.pathname).toBe('/')
     expect(screen.queryByText(/Late post/)).toBeNull()
     expect(localStorage.getItem('bloglistUser')).toBeNull()
   })
+
+  it('guards duplicate login submissions and ignores the old public load after signing in', async () => {
+    window.history.replaceState({}, '', '/login')
+    const publicLoad = deferred()
+    const pendingLogin = deferred()
+    let loads = 0
+    const requests = mockApi(({ url }) => {
+      if (url === '/api/login') return pendingLogin.promise
+      loads += 1
+      return loads === 1 ? publicLoad.promise : reply([firstBlog])
+    })
+    const user = userEvent.setup()
+    render(<App />)
+    await user.type(screen.getByLabelText('Username'), 'alice')
+    await user.type(screen.getByLabelText('Password'), 'secret')
+    await user.click(screen.getByRole('button', { name: 'Log in' }))
+    expect(screen.getByRole('button', { name: 'Logging in…' }).disabled).toBe(true)
+    fireEvent.submit(screen.getByRole('form', { name: 'Log in' }))
+    expect(requests.filter(item => item.url === '/api/login')).toHaveLength(1)
+    await act(async () => { pendingLogin.resolve(reply(alice)) })
+    expect(await screen.findByRole('link', { name: 'First post' })).toBeTruthy()
+    await act(async () => { publicLoad.resolve(reply([popularBlog])) })
+    expect(screen.getByRole('link', { name: 'First post' })).toBeTruthy()
+    expect(screen.queryByRole('link', { name: 'Popular post' })).toBeNull()
+    expect(window.location.pathname).toBe('/')
+  })
+
+  it('ignores a late like response after logout and reloads the public list', async () => {
+    asAlice()
+    const pendingLike = deferred()
+    mockApi(({ method }) => method === 'GET' ? reply([firstBlog]) : pendingLike.promise)
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(await screen.findByRole('link', { name: 'First post' }))
+    await user.click(screen.getByRole('button', { name: 'Like', exact: true }))
+    await user.click(screen.getByRole('button', { name: 'Log out' }))
+    expect(await screen.findByRole('link', { name: 'First post' })).toBeTruthy()
+    await act(async () => { pendingLike.resolve(reply({ ...firstBlog, likes: 99 })) })
+    expect(screen.getByText('Likes: 1')).toBeTruthy()
+    expect(screen.queryByText('Likes: 99')).toBeNull()
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(window.location.pathname).toBe('/')
+  })
+
 })
