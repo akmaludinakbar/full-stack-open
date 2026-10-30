@@ -4,7 +4,7 @@ Coursework for [Full Stack Open](https://fullstackopen.com/), University of Hels
 
 ## AI assistance and status
 
-Codex assisted with planning, implementation, explanations, tests, and review. This repository does not present generated code as unaided work. The learner reported reviewing the Part 0 and Part 1 drafts on 29 October 2026. Parts 2–5 are available as AI-assisted drafts pending learner review. Part 3 Atlas setup and public deployment remain pending. Official submission and study-hour records are tracked separately; no certificate is claimed here.
+Codex assisted with planning, implementation, explanations, tests, and review. This repository does not present generated code as unaided work. On 30 October 2026, the learner reported reading the materials and reviewing the prepared work listed below, covering Parts 0–4 and 5.1–5.12. Part 3 is deployed on Vercel Hobby and connected to MongoDB Atlas; the exercise 3.12 CLI add/list flow against Atlas and cleanup of its synthetic test contact were verified. Official submission and study-hour records are tracked in the course submission service; no certificate is claimed here.
 
 ## Exercises
 
@@ -14,15 +14,15 @@ Codex assisted with planning, implementation, explanations, tests, and review. T
 | 1 | `part1/courseinfo` | 1.1–1.5 |
 | 1 | `part1/unicafe` | 1.6–1.11 |
 | 1 | `part1/anecdotes` | 1.12–1.14 |
-| 2 | `part2/courseinfo` | 2.1–2.5; draft pending learner review |
-| 2 | `part2/phonebook` | 2.6–2.17; draft pending learner review |
-| 2 | `part2/countries` | 2.18–2.20; draft pending learner review |
-| 3 | `part3/phonebook-backend` | Local backend/frontend verified; Atlas/deployment pending |
-| 4 | `part4/bloglist-backend` | 4.1–4.23; draft pending learner review |
-| 5 | `part5/bloglist-frontend` | 5.1–5.12; draft pending learner review |
+| 2 | `part2/courseinfo` | 2.1–2.5 |
+| 2 | `part2/phonebook` | 2.6–2.17 |
+| 2 | `part2/countries` | 2.18–2.20 |
+| 3 | `part3/phonebook-backend` | 3.1–3.22; live Vercel/Atlas checks and Atlas CLI add/list verified |
+| 4 | `part4/bloglist-backend` | 4.1–4.23 |
+| 5 | `part5/bloglist-frontend` | 5.1–5.12 |
 
 Each application has its own README, package lock, and behavior tests. Use Node.js 24.1.0, enter the app directory, then run `npm ci`, `npm test`, `npm run build`, or `npm run dev`.
 
 Exercise wording and sample data are attributed to the official course in each app or diagram. Final application states represent the incremental exercise series. Private learning notes, local process reports, credentials, dependency directories, and build outputs are excluded.
 
-Phonebook deployment source is also available in [full-stack-open-phonebook](https://github.com/akmaludinakbar/full-stack-open-phonebook). Public hosting and Atlas verification remain pending.
+Phonebook deployment source is also available in [full-stack-open-phonebook](https://github.com/akmaludinakbar/full-stack-open-phonebook). The [live Phonebook application](https://full-stack-open-phonebook-ruddy.vercel.app) is deployed on Vercel Hobby without entering a card. Production build, frontend/API access, browser create/reload persistence, API update/delete, and synthetic-data cleanup were verified on 30 October 2026. The exercise 3.12 CLI also added and listed a unique synthetic contact against Atlas; that contact was then removed. The URI was supplied only through an ephemeral environment variable, with no credential file saved. This technical evidence supports 3.10, 3.11, 3.12 and 3.21; it does not establish course submission or certificate completion.
