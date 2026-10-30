@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': 'http://127.0.0.1:3003',
+      '/api': process.env.BLOGLIST_API_TARGET || 'http://127.0.0.1:3003',
     },
   },
   test: { environment: 'jsdom' },

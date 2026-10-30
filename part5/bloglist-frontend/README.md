@@ -1,6 +1,6 @@
 # Full Stack Open Part 5: Bloglist frontend
 
-This React 19/Vite app covers exercises 5.1–5.12 against the Part 4 backend. It was prepared with Codex AI assistance. The learner should inspect and understand the implementation, verify the exercise claims, and decide what to submit through their own course account. No course submission or certificate completion is implied.
+This React 19/Vite app covers exercises 5.1–5.16 against the Part 4 backend. It was prepared with Codex AI assistance. The learner should inspect and understand the implementation, verify the exercise claims, and decide what to submit through their own course account. No course submission or certificate completion is implied.
 
 ## Run locally
 
@@ -37,8 +37,14 @@ npm run build
 | 5.10 | Blogs render in descending order of likes |
 | 5.11 | Only the creator sees Delete; confirmation precedes the request |
 | 5.12 | ESLint flat config and passing `npm run lint` |
+| 5.13 | `src/components/Blog.test.jsx`: title/author appear initially; URL/likes are hidden |
+| 5.14 | `src/components/Blog.test.jsx`: clicking View reveals the URL and like count |
+| 5.15 | `src/components/Blog.test.jsx`: two sequential Like clicks invoke the supplied handler twice |
+| 5.16 | `src/components/BlogForm.test.jsx`: entering title/author/URL and submitting calls `onCreate` with those fields |
 
-Course sources: [login in frontend](https://fullstackopen.com/en/part5/login_in_frontend/) and [props.children and component refs](https://fullstackopen.com/en/part5/props_children_and_component_refs/). Exercises 5.13 onward are outside this implementation target.
+Course sources: [login in frontend](https://fullstackopen.com/en/part5/login_in_frontend/), [props.children and component refs](https://fullstackopen.com/en/part5/props_children_and_component_refs/), and [testing React apps](https://fullstackopen.com/en/part5/testing_react_apps/).
+
+The four component tests for 5.13–5.16 cover behavior already present in the app; no production change or failing-first phase was needed. Run only these cases with `npm test -- src/components/Blog.test.jsx src/components/BlogForm.test.jsx`, or use `npm test` for the complete frontend suite. Learner review and new study time remain pending. The current official record remains 97 accepted exercises and a grade-3 certificate; these test additions do not constitute new official submissions.
 
 ## Learner review
 
@@ -46,3 +52,7 @@ Course sources: [login in frontend](https://fullstackopen.com/en/part5/login_in_
 2. Create two blogs, like one until sorting changes, and check that its creator stays visible without reloading.
 3. With two users, check which Delete buttons each can see and confirm deletion is blocked by the backend for nonowners.
 4. Compare the exercise map with the linked course text and make your own submission decision.
+
+## Browser tests: 5.17–5.23
+
+The separate [`../bloglist-e2e`](../bloglist-e2e/README.md) npm project runs real Chromium against this frontend and a disposable Part 4 API. Its Playwright config owns backend port 3305 and frontend port 5315 and refuses server reuse. `BLOGLIST_API_TARGET` overrides Vite's development proxy for that isolated run; without it, the proxy continues to use `http://127.0.0.1:3003`. Follow the E2E README for installation, commands, isolation details, and the seven-exercise evidence map.

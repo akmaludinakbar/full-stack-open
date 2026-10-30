@@ -63,3 +63,9 @@ Course sources: [backend structure and helpers](https://fullstackopen.com/en/par
 1. Run the tests and use the demo API to register two users, create a blog, update likes, and try deleting as each user.
 2. Explain why password validation happens before hashing and why a unique database index matters.
 3. Check each exercise against the linked course text, then decide which exercises to claim and submit through your own account.
+
+## Disposable Part 5 browser-test API
+
+`npm run start:e2e` explicitly selects `NODE_ENV=test` and starts a dedicated temporary API on loopback port 3305. The script always replaces any incoming `MONGODB_URI` and `SECRET` before loading the app, creates its own MongoMemoryServer, and removes its temporary database on shutdown. It rejects non-test startup if run directly without `NODE_ENV=test`. `GET /api/blogs` is the readiness URL. Startup failure and SIGINT/SIGTERM close the HTTP server, Mongoose connection, and MongoDB process.
+
+`POST /api/testing/reset` deletes users and blogs only in an app explicitly given the testing router while `NODE_ENV=test`. The ordinary exported app (including `server.js`) never exposes reset, even in test mode. Only the disposable launcher injects that router, after it owns and connects its MongoMemoryServer. No environment variable can activate reset in the ordinary app. `tests/testing.test.js` verifies explicit reset, ordinary-app data preservation in test mode, and rejection outside test mode against temporary MongoDB. `tests/e2e-server.test.js` verifies non-test refusal, ignored incoming URI/secret, real reset, and SIGTERM shutdown. The complete real Chromium suite and setup commands are in [`../../part5/bloglist-e2e/README.md`](../../part5/bloglist-e2e/README.md).

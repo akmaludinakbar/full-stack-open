@@ -1,0 +1,13 @@
+{
+  "name": "fullstackopen-part5-bloglist-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "install:browser": "playwright install chromium"
+  },
+  "engines": { "node": ">=24.1.0" },
+  "devDependencies": { "@playwright/test": "1.64.1" }
+}
