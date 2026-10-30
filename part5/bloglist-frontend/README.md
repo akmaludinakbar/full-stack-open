@@ -38,7 +38,7 @@ The separate [`../bloglist-e2e`](../bloglist-e2e/README.md) npm project runs rea
 
 ## Exercise map
 
-Earlier-stage behavior is preserved in Git history where the course explicitly supersedes it with routing. Component-stage evidence is commit `4050797`; initial Playwright evidence is `4050797`, with reset isolation hardened in `4050797`.
+Earlier-stage behavior is preserved in Git history where the course explicitly supersedes it with routing. The public [pre-router snapshot 4050797](https://github.com/akmaludinakbar/full-stack-open/commit/40507976d4ffdbb0f02894748f5b2bc3763c05b1) contains the initial expand/hide UI, component tests and Playwright suite, with reset isolation already hardened.
 
 | Exercise | Implementation / evidence |
 | --- | --- |
